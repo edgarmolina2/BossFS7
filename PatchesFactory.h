@@ -7,18 +7,25 @@
 
 #ifndef PATCHESFACTORY_H_
 #define PATCHESFACTORY_H_
+
 #include <Vector.h>
-#include <MIDI.h>
+
+#include "Constants.h"
+#include "MIDIMessageBuilder.h"
 #include "Patch.h"
-#include "Colors.h"
+#include "SAEqualizer.h"
+#include "StrymonPedal.h"
 
 using namespace midi;
 namespace controller {
 
 class PatchesFactory {
 private:
-    Message<SYS_EX_MAX> createMessage(MidiType type, DataByte data1,
-            DataByte data2, int channel);
+    SAEqualizer* eq = new SAEqualizer();
+    StrymonPedal* bigsky = new StrymonPedal(BIGSKY_CH);
+    StrymonPedal* mobius = new StrymonPedal(MOBIUS_CH);
+    StrymonPedal* timeLine = new StrymonPedal(TIMELINE_CH);
+    MIDIMessageBuilder* messageBuilder = new MIDIMessageBuilder();
 public:
     PatchesFactory();
     void initializePatches(Vector<Patch>* vectorToInitialize);

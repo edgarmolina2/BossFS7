@@ -25,7 +25,7 @@ public:
     Patch();
     void addMessage(Message<SYS_EX_MAX> message);
     Vector<Message<SYS_EX_MAX>>* getMessages();
-    uint32_t setColor(uint32_t color);
+    void setColor(uint32_t color);
     uint32_t getColor();
 };
 

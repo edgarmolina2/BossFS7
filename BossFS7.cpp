@@ -20,8 +20,6 @@ unsigned nextPatch = 0;
 unsigned currentPatch = 0;
 unsigned tempo = 120;
 unsigned long tempoMicros = 0;
-unsigned long nextBeat = 0;
-unsigned long clockMicros = 0;
 unsigned long nextClock = 0;
 unsigned long tap = 0;
 unsigned long previousTap = 0;
@@ -53,8 +51,12 @@ void sendPatch(unsigned patch) {
     setBLed(BLACK);
 }
 
-unsigned long getBMPInMicro(unsigned bpm) {
-    return 60000000 / bpm;
+double getNextClockTime(unsigned bpm) {
+    return (60000000 / bpm / 24);
+}
+
+unsigned getTempo(unsigned long t1, unsigned long t2) {
+    return 60000000 / (t2 - t1);
 }
 
 void setup() {
@@ -71,25 +73,14 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     MIDI->begin();
     initializeLeds();
-    tempoMicros = getBMPInMicro(tempo);
-    clockMicros = tempoMicros / 24;
-    unsigned long microTime = micros();
-    nextBeat = microTime + tempoMicros;
-    nextClock = microTime + clockMicros;
+    nextClock = micros() + getNextClockTime(tempo);
     sendPatch(currentPatch);
 }
 
 void loop() {
-    unsigned long time = micros();
-    if (time >= nextClock) {
+    if (micros() >= nextClock) {
         MIDI->sendRealTime(MidiType::Clock);
-        nextClock = time + clockMicros;
-    }
-    if (time >= nextBeat) {
-        setBLed(patches->at(nextPatch).getColor());
-        nextBeat = time + tempoMicros;
-    } else if (time >= nextBeat - tempoMicros + tempoMicros / 10) {
-        setBLed(BLACK);
+        nextClock = micros() + getNextClockTime(tempo) - 2000;
     }
 
     int a = buttonA->read();
@@ -113,9 +104,7 @@ void loop() {
     } else if (b) {
         tap = micros();
         if (previousTap != 0) {
-            tempoMicros = (tap - previousTap);
-            nextBeat = tap + tempoMicros;
-            clockMicros = tempoMicros / 24;
+            tempo = getTempo(previousTap, tap);
             previousTap = 0;
         } else {
             previousTap = tap;

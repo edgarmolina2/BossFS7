@@ -7,6 +7,12 @@
 
 #include "Patch.h"
 
+#include <MIDI.h>
+#include <midi_Message.h>
+#include <stdint.h>
+#include <Vector/VectorDefinitions.h>
+
+using namespace midi;
 namespace controller {
 
 Patch::Patch() {
@@ -23,12 +29,11 @@ Vector<Message<SYS_EX_MAX> >* Patch::getMessages() {
     return messages;
 }
 
-uint32_t Patch::getColor() {
-    return color;
-}
-
-uint32_t Patch::setColor(uint32_t color) {
+void Patch::setColor(uint32_t color) {
     this->color = color;
 }
 
+uint32_t Patch::getColor() {
+    return color;
+}
 } /* namespace controller */
