@@ -1,0 +1,2 @@
+eclipse.preferences.version=1
+libraries=["MIDI Library","Vector","Adafruit NeoPixel",{"package"\:"arduino","platform"\:"avr","library"\:"SoftwareSerial"}]
